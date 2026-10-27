@@ -1,4 +1,3 @@
-# NutriMet-Context-Aware-Daily-Calorie-Energy-Expenditure-Estimator
 # NutriMet — Context-Aware Daily Calorie & Energy Expenditure Estimator
 
 **NutriMet** is a proposed web and mobile platform for Bangladeshi university students and young professionals to accurately track nutrition, estimate daily energy expenditure, and manage context-aware diet plans.
