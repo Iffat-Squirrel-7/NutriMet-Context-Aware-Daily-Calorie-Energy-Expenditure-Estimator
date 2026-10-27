@@ -65,30 +65,7 @@ NutriMet proposes a local food database and smart adjustment algorithms and thei
 | **Deployment** | Cloud-based (e.g., DigitalOcean) |
 
 ---
-## 6. Repository contents
 
-```text
-CalorieGuard/NutriMet/
-├── README.md
-├── nutrition_database.csv
-├── user_activity_log.json
-├── diagrams/
-│   ├── store_diagram.png
-│   ├── sequencus_diagram.png
-│   └── data_flow_diagram.png
-├── Models/
-│   ├── nutrient_model.py
-│   └── activity_estinatormpy
-├── proposal/
-│   └── main.pdf
-│   └── main.tex
-└── Prototype/
-    └── app_screenshoots/
-    └── web_interfacelooked.html
-    └── ctitulation_engine.js
-    └── gilgnore
-
----
 
 ## 7. Where the assignment requirements are addressed
 
