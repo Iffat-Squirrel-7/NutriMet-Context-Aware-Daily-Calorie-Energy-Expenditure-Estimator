@@ -130,5 +130,4 @@ cd proposal
 latexmk -pdf main.tex
 
 ---
-### 12. Important Technical Note
-The proposal, diagrams, and prototype describe the planned design. They should not be interpreted as evidence that the full application, database, authentication, or formal tests are complete. These are planned for the subsequent development stage. The repository is organized to make the current submission easy to review and to provide a foundation for that later work[cite: 4].
+
