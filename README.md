@@ -65,6 +65,30 @@ NutriMet proposes a local food database and smart adjustment algorithms and thei
 | **Deployment** | Cloud-based (e.g., DigitalOcean) |
 
 ---
+## 6. Repository contents
+
+```text
+CalorieGuard/NutriMet/
+├── README.md
+├── nutrition_database.csv
+├── user_activity_log.json
+├── diagrams/
+│   ├── store_diagram.png
+│   ├── sequencus_diagram.png
+│   └── data_flow_diagram.png
+├── Models/
+│   ├── nutrient_model.py
+│   └── activity_estinatormpy
+├── proposal/
+│   └── main.pdf
+│   └── main.tex
+└── Prototype/
+    └── app_screenshoots/
+    └── web_interfacelooked.html
+    └── ctitulation_engine.js
+    └── gilgnore
+
+---
 
 ## 7. Where the assignment requirements are addressed
 
@@ -129,8 +153,7 @@ The context data input processes user inputs to evaluate food items and modifies
 cd proposal
 latexmk -pdf main.tex
 
+---
 ## 12. Important Technical Note
 
 The proposal, diagrams, and prototype describe the planned design. They should not be interpreted as evidence that the full application, database, authentication, or formal tests are complete. These are planned for the subsequent development stage. The repository is organized to make the current submission easy to review and to provide a foundation for that later work[cite: 4].
-
-
