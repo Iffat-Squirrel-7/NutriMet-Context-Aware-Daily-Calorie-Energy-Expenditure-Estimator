@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NutriMet – Capstone Project Proposal</title>
+<style>
+  body { font-family: Georgia, "Times New Roman", serif; line-height: 1.6; color: #1a1a1a; background: #f4f4f2; margin: 0; }
+  .page { max-width: 820px; margin: 24px auto; background: #fff; padding: 48px 56px; box-shadow: 0 1px 6px rgba(0,0,0,.15); }
+  .cover { text-align: center; min-height: 80vh; display: flex; flex-direction: column; justify-content: space-between; }
+  .cover h1 { font-size: 3rem; margin: 3rem 0 .3rem; }
+  .cover table { margin: 2rem auto; border: none; width: auto; }
+  .cover td { border: none; padding: 4px 12px; text-align: left; }
+  .status { font-style: italic; font-size: .85rem; }
+  h2 { border-bottom: 1px solid #ccc; padding-bottom: 4px; margin-top: 2rem; }
+  h3 { margin-top: 1.5rem; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .95rem; }
+  th, td { border: 1px solid #bbb; padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: #eee; }
+  figure { margin: 1.5rem 0; text-align: center; overflow-x: auto; }
+  figure svg { max-width: 100%; height: auto; }
+  figcaption { font-size: .9rem; color: #555; margin-top: 6px; }
+  nav ol { columns: 2; }
+  .formula { text-align: center; font-style: italic; margin: 1rem 0; }
+  @media print { body { background: #fff; } .page { box-shadow: none; margin: 0; padding: 0; } h2 { break-after: avoid; } figure { break-inside: avoid; } }
+  @media (max-width: 600px) { .page { padding: 24px 18px; } nav ol { columns: 1; } }
+</style>
+</head>
+<body>
+
+<div class="page cover">
+  <div>
+    <p>Mawlana Bhashani Science and Technology University<br>Department of Information and Communication Technology</p>
+    <h1>NutriMet</h1>
+    <p style="font-size:1.2rem">Context-Aware Daily Calorie &amp; Energy Expenditure Estimator</p>
+    <p style="font-size:1.1rem;margin-top:2rem">Individual Capstone Project Proposal</p>
+    <table>
+      <tr><td><strong>Student Name:</strong></td><td>Iffat Mokarrama</td></tr>
+      <tr><td><strong>Student ID:</strong></td><td>IT24035</td></tr>
+    </table>
+  </div>
+  <p class="status">Status: project proposal, system design and an initial UI prototype. The full application is planned for future development.</p>
+</div>
+
+<div class="page">
+<nav>
+<h2 style="margin-top:0">Contents</h2>
+<ol>
+  <li><a href="#abstract">Abstract</a></li>
+  <li><a href="#s1">Introduction and Background</a></li>
+  <li><a href="#s2">Problem Statement</a></li>
+  <li><a href="#s3">Aims and Objectives</a></li>
+  <li><a href="#s4">Project Scope</a></li>
+  <li><a href="#s5">Stakeholders and User Roles</a></li>
+  <li><a href="#s6">Functional Requirements</a></li>
+  <li><a href="#s7">Non-Functional Requirements</a></li>
+  <li><a href="#s8">Feasibility Study</a></li>
+  <li><a href="#s9">Software Development Methodology</a></li>
+  <li><a href="#s10">System Architecture and Technology Stack</a></li>
+  <li><a href="#s11">System Design</a></li>
+  <li><a href="#s12">Basic Database Design</a></li>
+  <li><a href="#s13">UI Prototype Overview</a></li>
+  <li><a href="#s14">Six-Week Development Schedule</a></li>
+  <li><a href="#s15">Milestones and Deliverables</a></li>
+  <li><a href="#s16">Basic Testing Strategy</a></li>
+  <li><a href="#s17">Risk Analysis and Mitigation</a></li>
+  <li><a href="#s18">Expected Outcomes</a></li>
+  <li><a href="#s19">Conclusion</a></li>
+  <li><a href="#refs">References</a></li>
+</ol>
+</nav>
+
+<h2 id="abstract">Abstract</h2>
+<p>Most calorie calculators estimate daily energy needs with a single fixed activity multiplier. This ignores the real context of a person’s day, such as how long they slept, how hot it was, how stressed they felt and which activities they actually did. NutriMet is a simple, context-aware estimator that combines basal metabolic rate (BMR), activity energy based on MET values, a context adjustment factor and the thermic effect of food (TEF) to give a more realistic daily energy expenditure figure. The project follows an Incremental Model and is scheduled over six weeks. The prototype uses Python with Flask, SQLite and a simple HTML/CSS front end. This document contains the requirements, design diagrams, database design, testing strategy and an initial UI prototype plan.</p>
+
+<h2 id="s1">1 Introduction and Background</h2>
+<p>Students and young adults often track calories using generic online calculators. These tools multiply BMR by a fixed factor (sedentary, moderate, active) and give one number for every day. In reality, energy use changes from day to day depending on movement, sleep, weather and stress. Studies on resting energy expenditure and the Compendium of Physical Activities provide well-established formulas and MET values that can be combined into a better estimate.</p>
+<p>NutriMet proposes a small application that takes these inputs together and explains the result clearly, so that the user can understand where the calories go each day.</p>
+
+<h2 id="s2">2 Problem Statement</h2>
+<p>Existing calorie calculators have several weaknesses:</p>
+<ul>
+  <li>they use one fixed activity multiplier for all days;</li>
+  <li>they ignore context such as sleep, temperature and stress;</li>
+  <li>they rarely show how the final number was calculated;</li>
+  <li>they do not keep a daily history that lets users compare their days.</li>
+</ul>
+<p>As a result, users get estimates that are too general to be useful for daily planning.</p>
+
+<h2 id="s3">3 Aims and Objectives</h2>
+<p><strong>Aim:</strong> To design, and in later weeks implement, a simple web application that estimates daily calorie and energy expenditure by considering the user’s body profile, daily activities and context.</p>
+<p><strong>Objectives:</strong></p>
+<ol>
+  <li>Analyse and document the requirements of the User and Administrator roles.</li>
+  <li>Produce the system design: DFD, use case, activity, ERD, class and object diagrams.</li>
+  <li>Design a small relational database for users, daily logs, activities, MET values and estimates.</li>
+  <li>Implement the BMR, activity energy, context factor and TEF calculations.</li>
+  <li>Implement profile, daily logging and history features with Flask and SQLite.</li>
+  <li>Provide an administrator interface for managing MET values and users.</li>
+  <li>Test the main workflow and deliver the project on GitHub.</li>
+</ol>
+
+<h2 id="s4">4 Project Scope</h2>
+<table>
+  <tr><th>Included</th><th>Excluded</th></tr>
+  <tr><td>User registration and login with two roles</td><td>Medical diagnosis or treatment advice</td></tr>
+  <tr><td>Body profile management (age, sex, height, weight)</td><td>Wearable device or sensor integration</td></tr>
+  <tr><td>Daily activity logging with durations</td><td>Automatic food image recognition</td></tr>
+  <tr><td>Context input: temperature, sleep, stress</td><td>Meal planning and diet recommendation</td></tr>
+  <tr><td>BMR, activity, context factor and TEF calculation</td><td>Mobile native applications</td></tr>
+  <tr><td>Estimate history and simple charts</td><td>Social features and sharing</td></tr>
+  <tr><td>Admin management of MET values and users</td><td>Cloud deployment and microservices</td></tr>
+</table>
+
+<h2 id="s5">5 Stakeholders and User Roles</h2>
+<ul>
+  <li><strong>User:</strong> registers, keeps a profile, logs daily activities and context, and views estimates and history.</li>
+  <li><strong>Administrator:</strong> manages the activity/MET list and user accounts.</li>
+  <li><strong>Supervisor/Evaluator:</strong> reviews the proposal, design and prototype.</li>
+  <li><strong>Developer:</strong> the student who designs, builds and tests the system.</li>
+</ul>
+
+<h2 id="s6">6 Functional Requirements</h2>
+<table>
+  <tr><th>ID</th><th>Requirement</th></tr>
+  <tr><td>FR1</td><td>The system shall allow a user to register, log in and log out.</td></tr>
+  <tr><td>FR2</td><td>The user shall be able to create and update a profile (age, sex, height, weight).</td></tr>
+  <tr><td>FR3</td><td>The user shall be able to select activities and enter durations for a day.</td></tr>
+  <tr><td>FR4</td><td>The user shall be able to enter context: temperature, sleep hours and stress level.</td></tr>
+  <tr><td>FR5</td><td>The system shall calculate BMR using the Mifflin-St Jeor equation.</td></tr>
+  <tr><td>FR6</td><td>The system shall calculate activity energy using (MET − 1) × weight × hours.</td></tr>
+  <tr><td>FR7</td><td>The system shall apply a context factor and TEF to produce total daily energy expenditure.</td></tr>
+  <tr><td>FR8</td><td>The system shall display a breakdown of BMR, activity, context and TEF.</td></tr>
+  <tr><td>FR9</td><td>The system shall save every estimate and show the user’s history.</td></tr>
+  <tr><td>FR10</td><td>The administrator shall add, edit and remove activities and MET values.</td></tr>
+  <tr><td>FR11</td><td>The administrator shall view and manage user accounts.</td></tr>
+</table>
+
+<h2 id="s7">7 Non-Functional Requirements</h2>
+<ul>
+  <li><strong>Usability:</strong> simple forms and a clear result page that can be used without training.</li>
+  <li><strong>Performance:</strong> an estimate shall be produced in under two seconds.</li>
+  <li><strong>Security:</strong> passwords are stored as hashes; admin pages are role-protected.</li>
+  <li><strong>Reliability:</strong> input validation prevents impossible values (for example negative weight).</li>
+  <li><strong>Maintainability:</strong> calculation logic is separated from the user interface.</li>
+  <li><strong>Portability:</strong> runs in any modern browser.</li>
+</ul>
+
+<h2 id="s8">8 Feasibility Study</h2>
+<p><strong>Technical:</strong> Python, Flask and SQLite are free, well documented and suitable for a student project. <strong>Economic:</strong> no paid tools or services are needed. <strong>Operational:</strong> the application is easy to use and can run on a normal laptop. <strong>Schedule:</strong> the scope is limited to a core workflow that can be completed in six weeks.</p>
+
+<h2 id="s9">9 Software Development Methodology</h2>
+<p>The project follows the <strong>Incremental Model</strong>. Each increment delivers a working part of the system: first the calculation engine, then the database and profile, then logging and history, and finally the admin module and testing. This allows early testing and keeps the scope manageable for one developer.</p>
+
+<h2 id="s10">10 Proposed System Architecture and Technology Stack</h2>
+<p>NutriMet uses a three-layer architecture: a presentation layer (HTML, CSS, JavaScript), an application layer (Python/Flask with a separate estimator module) and a data layer (SQLite).</p>
+<table style="width:auto">
+  <tr><th>Layer</th><th>Technology</th></tr>
+  <tr><td>Front end</td><td>HTML5, CSS3, JavaScript (Chart.js)</td></tr>
+  <tr><td>Back end</td><td>Python 3, Flask</td></tr>
+  <tr><td>Database</td><td>SQLite</td></tr>
+  <tr><td>Testing</td><td>pytest</td></tr>
+  <tr><td>Version control</td><td>Git and GitHub</td></tr>
+</table>
+<p>The core estimate is</p>
+<p class="formula">TDEE = (BMR + E<sub>act</sub>) × C + TEF, &nbsp;&nbsp; TEF = 0.10 × (BMR + E<sub>act</sub>) × C</p>
+<p>where E<sub>act</sub> = Σ (MET<sub>i</sub> − 1) × w × h<sub>i</sub> and C is the product of the temperature, sleep and stress factors.</p>
+
+<h2 id="s11">11 System Design</h2>
+<h3>11.1 Data Flow Diagram (DFD)</h3>
+<figure><svg
+ viewBox="0.00 0.00 1521.58 468.33" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 464.33)">
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-464.33 1517.58,-464.33 1517.58,4 -4,4"/>
+<!-- U -->
+<g id="node1" class="node">
+<title>U</title>
+<polygon fill="none" stroke="black" points="438.04,-371.52 384.04,-371.52 384.04,-335.52 438.04,-335.52 438.04,-371.52"/>
+<text text-anchor="middle" x="411.04" y="-350.72" font-family="Helvetica,sans-Serif" font-size="11.00">User</text>
+</g>
+<!-- P1 -->
+<g id="node3" class="node">
+<title>P1</title>
+<ellipse fill="none" stroke="black" cx="680.84" cy="-277.52" rx="42.35" ry="42.35"/>
+<text text-anchor="middle" x="680.84" y="-286.72" font-family="Helvetica,sans-Serif" font-size="11.00">1.0</text>
+<text text-anchor="middle" x="680.84" y="-274.72" font-family="Helvetica,sans-Serif" font-size="11.00">Manage</text>
+<text text-anchor="middle" x="680.84" y="-262.72" font-family="Helvetica,sans-Serif" font-size="11.00">Profile</text>
+</g>
+<!-- U&#45;&gt;P1 -->
+<g id="edge1" class="edge">
+<title>U&#45;&gt;P1</title>
+<path fill="none" stroke="black" d="M438.21,-343.39C452.52,-338.04 470.63,-331.54 487.04,-326.52 534.88,-311.86 590.33,-298.1 629.45,-288.92"/>
+<polygon fill="black" stroke="black" points="630.33,-292.3 639.27,-286.62 628.74,-285.49 630.33,-292.3"/>
+<text text-anchor="middle" x="531.54" y="-329.32" font-family="Helvetica,sans-Serif" font-size="9.00">profile details</text>
+</g>
+<!-- P2 -->
+<g id="node4" class="node">
+<title>P2</title>
+<ellipse fill="none" stroke="black" cx="680.84" cy="-123.52" rx="89.61" ry="89.61"/>
+<text text-anchor="middle" x="680.84" y="-132.72" font-family="Helvetica,sans-Serif" font-size="11.00">2.0</text>
+<text text-anchor="middle" x="680.84" y="-120.72" font-family="Helvetica,sans-Serif" font-size="11.00">Record Daily</text>
+<text text-anchor="middle" x="680.84" y="-108.72" font-family="Helvetica,sans-Serif" font-size="11.00">Context &amp; Activities</text>
+</g>
+<!-- U&#45;&gt;P2 -->
+<g id="edge3" class="edge">
+<title>U&#45;&gt;P2</title>
+<path fill="none" stroke="black" d="M428.75,-335.42C443.58,-319.63 466.1,-296.37 487.04,-277.52 523.15,-245.01 565.11,-211.07 600.64,-183.36"/>
+<polygon fill="black" stroke="black" points="602.84,-186.08 608.59,-177.18 598.55,-180.56 602.84,-186.08"/>
+<text text-anchor="middle" x="531.54" y="-290.32" font-family="Helvetica,sans-Serif" font-size="9.00">sleep, temp, stress,</text>
+<text text-anchor="middle" x="531.54" y="-280.32" font-family="Helvetica,sans-Serif" font-size="9.00">activities</text>
+</g>
+<!-- P4 -->
+<g id="node6" class="node">
+<title>P4</title>
+<ellipse fill="none" stroke="black" cx="1452.77" cy="-399.52" rx="60.62" ry="60.62"/>
+<text text-anchor="middle" x="1452.77" y="-408.72" font-family="Helvetica,sans-Serif" font-size="11.00">4.0</text>
+<text text-anchor="middle" x="1452.77" y="-396.72" font-family="Helvetica,sans-Serif" font-size="11.00">View History</text>
+<text text-anchor="middle" x="1452.77" y="-384.72" font-family="Helvetica,sans-Serif" font-size="11.00">&amp; Reports</text>
+</g>
+<!-- U&#45;&gt;P4 -->
+<g id="edge11" class="edge">
+<title>U&#45;&gt;P4</title>
+<path fill="none" stroke="black" d="M428.01,-371.58C442.03,-386.2 463.79,-406.02 487.04,-416.52 566.02,-452.17 593.19,-445.52 679.84,-445.52 679.84,-445.52 679.84,-445.52 1316.96,-445.52 1341.09,-445.52 1366.41,-438.84 1388.5,-430.57"/>
+<polygon fill="black" stroke="black" points="1390.05,-433.72 1398.09,-426.81 1387.5,-427.2 1390.05,-433.72"/>
+<text text-anchor="middle" x="991.64" y="-448.32" font-family="Helvetica,sans-Serif" font-size="9.00">request</text>
+</g>
+<!-- A -->
+<g id="node2" class="node">
+<title>A</title>
+<polygon fill="none" stroke="black" points="92,-79.52 0,-79.52 0,-43.52 92,-43.52 92,-79.52"/>
+<text text-anchor="middle" x="46" y="-58.72" font-family="Helvetica,sans-Serif" font-size="11.00">Administrator</text>
+</g>
+<!-- P5 -->
+<g id="node7" class="node">
+<title>P5</title>
+<ellipse fill="none" stroke="black" cx="257.52" cy="-61.52" rx="61.54" ry="61.54"/>
+<text text-anchor="middle" x="257.52" y="-70.72" font-family="Helvetica,sans-Serif" font-size="11.00">5.0</text>
+<text text-anchor="middle" x="257.52" y="-58.72" font-family="Helvetica,sans-Serif" font-size="11.00">Manage MET</text>
+<text text-anchor="middle" x="257.52" y="-46.72" font-family="Helvetica,sans-Serif" font-size="11.00">Data</text>
+</g>
+<!-- A&#45;&gt;P5 -->
+<g id="edge14" class="edge">
+<title>A&#45;&gt;P5</title>
+<path fill="none" stroke="black" d="M92.2,-61.52C119.44,-61.52 154.72,-61.52 185.6,-61.52"/>
+<polygon fill="black" stroke="black" points="185.89,-65.02 195.89,-61.52 185.89,-58.02 185.89,-65.02"/>
+<text text-anchor="middle" x="144" y="-64.32" font-family="Helvetica,sans-Serif" font-size="9.00">add/edit activity</text>
+</g>
+<!-- D1 -->
+<g id="node8" class="node">
+<title>D1</title>
+<polygon fill="none" stroke="black" points="919.14,-289.52 864.14,-289.52 864.14,-265.52 919.14,-265.52 931.14,-277.52 919.14,-289.52"/>
+<text text-anchor="middle" x="897.64" y="-274.72" font-family="Helvetica,sans-Serif" font-size="11.00">D1 Users</text>
+</g>
+<!-- P1&#45;&gt;D1 -->
+<g id="edge2" class="edge">
+<title>P1&#45;&gt;D1</title>
+<path fill="none" stroke="black" d="M723.51,-277.52C760.98,-277.52 815.79,-277.52 853.66,-277.52"/>
+<polygon fill="black" stroke="black" points="853.86,-281.02 863.86,-277.52 853.86,-274.02 853.86,-281.02"/>
+</g>
+<!-- D2 -->
+<g id="node9" class="node">
+<title>D2</title>
+<polygon fill="none" stroke="black" points="931.64,-200.52 851.64,-200.52 851.64,-176.52 931.64,-176.52 943.64,-188.52 931.64,-200.52"/>
+<text text-anchor="middle" x="897.64" y="-185.72" font-family="Helvetica,sans-Serif" font-size="11.00">D2 Daily Logs</text>
+</g>
+<!-- P2&#45;&gt;D2 -->
+<g id="edge4" class="edge">
+<title>P2&#45;&gt;D2</title>
+<path fill="none" stroke="black" d="M767.04,-149.3C792.14,-156.9 818.93,-165 841.61,-171.86"/>
+<polygon fill="black" stroke="black" points="840.79,-175.28 851.38,-174.82 842.82,-168.58 840.79,-175.28"/>
+</g>
+<!-- P3 -->
+<g id="node5" class="node">
+<title>P3</title>
+<ellipse fill="none" stroke="black" cx="1115.3" cy="-277.52" rx="75.82" ry="75.82"/>
+<text text-anchor="middle" x="1115.3" y="-286.72" font-family="Helvetica,sans-Serif" font-size="11.00">3.0</text>
+<text text-anchor="middle" x="1115.3" y="-274.72" font-family="Helvetica,sans-Serif" font-size="11.00">Calculate</text>
+<text text-anchor="middle" x="1115.3" y="-262.72" font-family="Helvetica,sans-Serif" font-size="11.00">Energy Estimate</text>
+</g>
+<!-- P3&#45;&gt;U -->
+<g id="edge10" class="edge">
+<title>P3&#45;&gt;U</title>
+<path fill="none" stroke="black" d="M1040.46,-290.57C1010.45,-295.74 975.42,-301.61 943.64,-306.52 866.92,-318.36 847.87,-322.7 770.64,-330.52 653.05,-342.43 513.11,-349.31 448.3,-352.08"/>
+<polygon fill="black" stroke="black" points="448.03,-348.59 438.19,-352.5 448.33,-355.58 448.03,-348.59"/>
+<text text-anchor="middle" x="811.14" y="-331.32" font-family="Helvetica,sans-Serif" font-size="9.00">result</text>
+</g>
+<!-- D4 -->
+<g id="node11" class="node">
+<title>D4</title>
+<polygon fill="none" stroke="black" points="1348.96,-342.52 1270.96,-342.52 1270.96,-318.52 1348.96,-318.52 1360.96,-330.52 1348.96,-342.52"/>
+<text text-anchor="middle" x="1315.96" y="-327.72" font-family="Helvetica,sans-Serif" font-size="11.00">D4 Estimates</text>
+</g>
+<!-- P3&#45;&gt;D4 -->
+<g id="edge9" class="edge">
+<title>P3&#45;&gt;D4</title>
+<path fill="none" stroke="black" d="M1188.59,-296.8C1212.44,-303.17 1238.56,-310.13 1260.82,-316.07"/>
+<polygon fill="black" stroke="black" points="1260.19,-319.53 1270.76,-318.73 1262,-312.77 1260.19,-319.53"/>
+<text text-anchor="middle" x="1230.96" y="-315.32" font-family="Helvetica,sans-Serif" font-size="9.00">BMR, TDEE</text>
+</g>
+<!-- P4&#45;&gt;U -->
+<g id="edge13" class="edge">
+<title>P4&#45;&gt;U</title>
+<path fill="none" stroke="black" d="M1391.71,-399.52C1368.37,-399.52 1341.42,-399.52 1316.96,-399.52 679.84,-399.52 679.84,-399.52 679.84,-399.52 595.98,-399.52 499.47,-377.34 448.3,-363.78"/>
+<polygon fill="black" stroke="black" points="448.95,-360.34 438.39,-361.11 447.13,-367.09 448.95,-360.34"/>
+<text text-anchor="middle" x="991.64" y="-402.32" font-family="Helvetica,sans-Serif" font-size="9.00">history, charts</text>
+</g>
+<!-- D3 -->
+<g id="node10" class="node">
+<title>D3</title>
+<polygon fill="none" stroke="black" points="460.04,-73.52 350.04,-73.52 350.04,-49.52 460.04,-49.52 472.04,-61.52 460.04,-73.52"/>
+<text text-anchor="middle" x="411.04" y="-58.72" font-family="Helvetica,sans-Serif" font-size="11.00">D3 Activities (MET)</text>
+</g>
+<!-- P5&#45;&gt;D3 -->
+<g id="edge15" class="edge">
+<title>P5&#45;&gt;D3</title>
+<path fill="none" stroke="black" d="M319.27,-61.52C325.87,-61.52 332.61,-61.52 339.31,-61.52"/>
+<polygon fill="black" stroke="black" points="339.76,-65.02 349.76,-61.52 339.76,-58.02 339.76,-65.02"/>
+</g>
+<!-- D1&#45;&gt;P3 -->
+<g id="edge6" class="edge">
+<title>D1&#45;&gt;P3</title>
+<path fill="none" stroke="black" d="M931.4,-277.52C957.46,-277.52 995.13,-277.52 1029.53,-277.52"/>
+<polygon fill="black" stroke="black" points="1029.6,-281.02 1039.6,-277.52 1029.6,-274.02 1029.6,-281.02"/>
+<text text-anchor="middle" x="991.64" y="-280.32" font-family="Helvetica,sans-Serif" font-size="9.00">body data</text>
+</g>
+<!-- D2&#45;&gt;P3 -->
+<g id="edge7" class="edge">
+<title>D2&#45;&gt;P3</title>
+<path fill="none" stroke="black" d="M942.28,-206.53C968.94,-217.53 1003.83,-231.93 1035.21,-244.88"/>
+<polygon fill="black" stroke="black" points="1034.25,-248.27 1044.83,-248.85 1036.92,-241.8 1034.25,-248.27"/>
+<text text-anchor="middle" x="991.64" y="-240.32" font-family="Helvetica,sans-Serif" font-size="9.00">logs</text>
+</g>
+<!-- D3&#45;&gt;P2 -->
+<g id="edge5" class="edge">
+<title>D3&#45;&gt;P2</title>
+<path fill="none" stroke="black" d="M472.14,-75.43C504.91,-83.02 546.26,-92.59 583.42,-101.2"/>
+<polygon fill="black" stroke="black" points="582.74,-104.63 593.27,-103.48 584.32,-97.81 582.74,-104.63"/>
+<text text-anchor="middle" x="531.54" y="-101.32" font-family="Helvetica,sans-Serif" font-size="9.00">activity list</text>
+</g>
+<!-- D3&#45;&gt;P3 -->
+<g id="edge8" class="edge">
+<title>D3&#45;&gt;P3</title>
+<path fill="none" stroke="black" d="M461.24,-43.47C531.62,-20.45 664.29,12.41 770.64,-22.52 885.33,-60.18 992.88,-152.77 1056.15,-215.38"/>
+<polygon fill="black" stroke="black" points="1053.71,-217.89 1063.26,-222.48 1058.66,-212.94 1053.71,-217.89"/>
+<text text-anchor="middle" x="811.14" y="-53.32" font-family="Helvetica,sans-Serif" font-size="9.00">MET values</text>
+</g>
+<!-- D4&#45;&gt;P4 -->
+<g id="edge12" class="edge">
+<title>D4&#45;&gt;P4</title>
+<path fill="none" stroke="black" d="M1352.38,-348.65C1363.68,-354.43 1376.54,-361.01 1389.18,-367.48"/>
+<polygon fill="black" stroke="black" points="1387.81,-370.71 1398.31,-372.15 1391,-364.48 1387.81,-370.71"/>
+</g>
+</g>
+</svg>
+<figcaption>Figure 1: Data flow diagram of NutriMet.</figcaption></figure>
+<h3>11.2 Use Case Diagram</h3>
+<figure><svg
+ viewBox="0.00 0.00 338.68 505.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 501)">
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-501 334.68,-501 334.68,4 -4,4"/>
+<g id="clust1" class="cluster">
+<title>cluster</title>
+<polygon fill="none" stroke="black" points="120,-8 120,-489 322.68,-489 322.68,-8 120,-8"/>
+<text text-anchor="middle" x="221.34" y="-473.8" font-family="Helvetica,sans-Serif" font-size="14.00">NutriMet System</text>
+</g>
+<!-- U -->
+<g id="node1" class="node">
+<title>U</title>
+<polygon fill="none" stroke="black" points="73,-297 19,-297 19,-261 73,-261 73,-297"/>
+<text text-anchor="middle" x="46" y="-276.2" font-family="Helvetica,sans-Serif" font-size="11.00">User</text>
+</g>
+<!-- u1 -->
+<g id="node3" class="node">
+<title>u1</title>
+<ellipse fill="none" stroke="black" cx="221.34" cy="-142" rx="61.88" ry="18"/>
+<text text-anchor="middle" x="221.34" y="-139.2" font-family="Helvetica,sans-Serif" font-size="11.00">Register / Login</text>
+</g>
+<!-- U&#45;&gt;u1 -->
+<g id="edge1" class="edge">
+<title>U&#45;&gt;u1</title>
+<path fill="none" stroke="black" d="M54.16,-260.81C64.78,-236.21 87.07,-192.7 120,-169 130.34,-161.56 142.61,-156.17 154.96,-152.26"/>
+<polygon fill="black" stroke="black" points="156.19,-155.55 164.85,-149.44 154.27,-148.82 156.19,-155.55"/>
+</g>
+<!-- u2 -->
+<g id="node4" class="node">
+<title>u2</title>
+<ellipse fill="none" stroke="black" cx="221.34" cy="-250" rx="58.86" ry="18"/>
+<text text-anchor="middle" x="221.34" y="-247.2" font-family="Helvetica,sans-Serif" font-size="11.00">Manage Profile</text>
+</g>
+<!-- U&#45;&gt;u2 -->
+<g id="edge2" class="edge">
+<title>U&#45;&gt;u2</title>
+<path fill="none" stroke="black" d="M73.33,-274.6C96.03,-270.8 129.7,-265.16 159.1,-260.25"/>
+<polygon fill="black" stroke="black" points="160.01,-263.64 169.29,-258.54 158.85,-256.74 160.01,-263.64"/>
+</g>
+<!-- u3 -->
+<g id="node5" class="node">
+<title>u3</title>
+<ellipse fill="none" stroke="black" cx="221.34" cy="-196" rx="73.23" ry="18"/>
+<text text-anchor="middle" x="221.34" y="-193.2" font-family="Helvetica,sans-Serif" font-size="11.00">Log Daily Activities</text>
+</g>
+<!-- U&#45;&gt;u3 -->
+<g id="edge3" class="edge">
+<title>U&#45;&gt;u3</title>
+<path fill="none" stroke="black" d="M66.33,-260.76C80.28,-248.49 100.09,-232.83 120,-223 130.55,-217.79 142.24,-213.48 153.8,-209.96"/>
+<polygon fill="black" stroke="black" points="154.82,-213.31 163.46,-207.17 152.88,-206.58 154.82,-213.31"/>
+</g>
+<!-- u4 -->
+<g id="node6" class="node">
+<title>u4</title>
+<ellipse fill="none" stroke="black" cx="221.34" cy="-435" rx="93.18" ry="22.76"/>
+<text text-anchor="middle" x="221.34" y="-438.2" font-family="Helvetica,sans-Serif" font-size="11.00">Enter Context</text>
+<text text-anchor="middle" x="221.34" y="-426.2" font-family="Helvetica,sans-Serif" font-size="11.00">(temp, sleep, stress)</text>
+</g>
+<!-- U&#45;&gt;u4 -->
+<g id="edge4" class="edge">
+<title>U&#45;&gt;u4</title>
+<path fill="none" stroke="black" d="M52.79,-297.17C62.39,-324.38 84.18,-375.56 120,-404 126.12,-408.86 133.01,-412.96 140.24,-416.43"/>
+<polygon fill="black" stroke="black" points="138.97,-419.69 149.54,-420.48 141.77,-413.27 138.97,-419.69"/>
+</g>
+<!-- u5 -->
+<g id="node7" class="node">
+<title>u5</title>
+<ellipse fill="none" stroke="black" cx="221.34" cy="-372" rx="75.82" ry="22.76"/>
+<text text-anchor="middle" x="221.34" y="-375.2" font-family="Helvetica,sans-Serif" font-size="11.00">Calculate Daily</text>
+<text text-anchor="middle" x="221.34" y="-363.2" font-family="Helvetica,sans-Serif" font-size="11.00">Energy Estimate</text>
+</g>
+<!-- U&#45;&gt;u5 -->
+<g id="edge5" class="edge">
+<title>U&#45;&gt;u5</title>
+<path fill="none" stroke="black" d="M64.06,-297.04C77.97,-310.8 98.72,-329.32 120,-341 129.89,-346.43 140.86,-351.04 151.81,-354.92"/>
+<polygon fill="black" stroke="black" points="150.81,-358.27 161.4,-358.14 153.04,-351.64 150.81,-358.27"/>
+</g>
+<!-- u6 -->
+<g id="node8" class="node">
+<title>u6</title>
+<ellipse fill="none" stroke="black" cx="221.34" cy="-309" rx="60.62" ry="22.76"/>
+<text text-anchor="middle" x="221.34" y="-312.2" font-family="Helvetica,sans-Serif" font-size="11.00">View History</text>
+<text text-anchor="middle" x="221.34" y="-300.2" font-family="Helvetica,sans-Serif" font-size="11.00">&amp; Charts</text>
+</g>
+<!-- U&#45;&gt;u6 -->
+<g id="edge6" class="edge">
+<title>U&#45;&gt;u6</title>
+<path fill="none" stroke="black" d="M73.33,-283.56C95.18,-287.34 127.21,-292.88 155.79,-297.83"/>
+<polygon fill="black" stroke="black" points="155.28,-301.29 165.73,-299.55 156.48,-294.4 155.28,-301.29"/>
+</g>
+<!-- A -->
+<g id="node2" class="node">
+<title>A</title>
+<polygon fill="none" stroke="black" points="92,-106 0,-106 0,-70 92,-70 92,-106"/>
+<text text-anchor="middle" x="46" y="-85.2" font-family="Helvetica,sans-Serif" font-size="11.00">Administrator</text>
+</g>
+<!-- A&#45;&gt;u1 -->
+<g id="edge7" class="edge">
+<title>A&#45;&gt;u1</title>
+<path fill="none" stroke="black" d="M92.34,-105.5C101.45,-108.81 110.99,-112.13 120,-115 134.1,-119.5 149.48,-123.88 163.85,-127.77"/>
+<polygon fill="black" stroke="black" points="163.06,-131.18 173.62,-130.38 164.86,-124.42 163.06,-131.18"/>
+</g>
+<!-- a1 -->
+<g id="node9" class="node">
+<title>a1</title>
+<ellipse fill="none" stroke="black" cx="221.34" cy="-88" rx="76.24" ry="18"/>
+<text text-anchor="middle" x="221.34" y="-85.2" font-family="Helvetica,sans-Serif" font-size="11.00">Manage MET Values</text>
+</g>
+<!-- A&#45;&gt;a1 -->
+<g id="edge8" class="edge">
+<title>A&#45;&gt;a1</title>
+<path fill="none" stroke="black" d="M92.09,-88C105.21,-88 120,-88 134.75,-88"/>
+<polygon fill="black" stroke="black" points="134.93,-91.5 144.93,-88 134.93,-84.5 134.93,-91.5"/>
+</g>
+<!-- a2 -->
+<g id="node10" class="node">
+<title>a2</title>
+<ellipse fill="none" stroke="black" cx="221.34" cy="-34" rx="57.25" ry="18"/>
+<text text-anchor="middle" x="221.34" y="-31.2" font-family="Helvetica,sans-Serif" font-size="11.00">Manage Users</text>
+</g>
+<!-- A&#45;&gt;a2 -->
+<g id="edge9" class="edge">
+<title>A&#45;&gt;a2</title>
+<path fill="none" stroke="black" d="M92.34,-70.5C101.45,-67.19 110.99,-63.87 120,-61 134.66,-56.33 150.7,-51.77 165.56,-47.77"/>
+<polygon fill="black" stroke="black" points="166.86,-51.04 175.63,-45.1 165.07,-44.28 166.86,-51.04"/>
+</g>
+</g>
+</svg>
+<figcaption>Figure 2: Use case diagram for User and Administrator.</figcaption></figure>
+<h3>11.3 Activity Diagram</h3>
+<figure><svg
+ viewBox="0.00 0.00 270.00 825.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 821)">
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-821 266,-821 266,4 -4,4"/>
+<!-- s -->
+<g id="node1" class="node">
+<title>s</title>
+<ellipse fill="black" stroke="black" cx="170" cy="-810" rx="7" ry="7"/>
+</g>
+<!-- a -->
+<g id="node2" class="node">
+<title>a</title>
+<path fill="none" stroke="black" d="M219,-766C219,-766 121,-766 121,-766 115,-766 109,-760 109,-754 109,-754 109,-742 109,-742 109,-736 115,-730 121,-730 121,-730 219,-730 219,-730 225,-730 231,-736 231,-742 231,-742 231,-754 231,-754 231,-760 225,-766 219,-766"/>
+<text text-anchor="middle" x="170" y="-745.2" font-family="Helvetica,sans-Serif" font-size="11.00">Login / open profile</text>
+</g>
+<!-- s&#45;&gt;a -->
+<g id="edge1" class="edge">
+<title>s&#45;&gt;a</title>
+<path fill="none" stroke="black" d="M170,-802.58C170,-796.23 170,-786.07 170,-776.3"/>
+<polygon fill="black" stroke="black" points="173.5,-776.05 170,-766.05 166.5,-776.05 173.5,-776.05"/>
+</g>
+<!-- b -->
+<g id="node3" class="node">
+<title>b</title>
+<path fill="none" stroke="black" d="M239,-693C239,-693 101,-693 101,-693 95,-693 89,-687 89,-681 89,-681 89,-669 89,-669 89,-663 95,-657 101,-657 101,-657 239,-657 239,-657 245,-657 251,-663 251,-669 251,-669 251,-681 251,-681 251,-687 245,-693 239,-693"/>
+<text text-anchor="middle" x="170" y="-672.2" font-family="Helvetica,sans-Serif" font-size="11.00">Enter or update body data</text>
+</g>
+<!-- a&#45;&gt;b -->
+<g id="edge2" class="edge">
+<title>a&#45;&gt;b</title>
+<path fill="none" stroke="black" d="M170,-729.81C170,-721.79 170,-712.05 170,-703.07"/>
+<polygon fill="black" stroke="black" points="173.5,-703.03 170,-693.03 166.5,-703.03 173.5,-703.03"/>
+</g>
+<!-- c -->
+<g id="node4" class="node">
+<title>c</title>
+<path fill="none" stroke="black" d="M250,-620C250,-620 90,-620 90,-620 84,-620 78,-614 78,-608 78,-608 78,-596 78,-596 78,-590 84,-584 90,-584 90,-584 250,-584 250,-584 256,-584 262,-590 262,-596 262,-596 262,-608 262,-608 262,-614 256,-620 250,-620"/>
+<text text-anchor="middle" x="170" y="-599.2" font-family="Helvetica,sans-Serif" font-size="11.00">Select activities and durations</text>
+</g>
+<!-- b&#45;&gt;c -->
+<g id="edge3" class="edge">
+<title>b&#45;&gt;c</title>
+<path fill="none" stroke="black" d="M170,-656.81C170,-648.79 170,-639.05 170,-630.07"/>
+<polygon fill="black" stroke="black" points="173.5,-630.03 170,-620.03 166.5,-630.03 173.5,-630.03"/>
+</g>
+<!-- d -->
+<g id="node5" class="node">
+<title>d</title>
+<path fill="none" stroke="black" d="M152,-547C152,-547 12,-547 12,-547 6,-547 0,-541 0,-535 0,-535 0,-523 0,-523 0,-517 6,-511 12,-511 12,-511 152,-511 152,-511 158,-511 164,-517 164,-523 164,-523 164,-535 164,-535 164,-541 158,-547 152,-547"/>
+<text text-anchor="middle" x="82" y="-532.2" font-family="Helvetica,sans-Serif" font-size="11.00">Enter context:</text>
+<text text-anchor="middle" x="82" y="-520.2" font-family="Helvetica,sans-Serif" font-size="11.00">temperature, sleep, stress</text>
+</g>
+<!-- c&#45;&gt;d -->
+<g id="edge4" class="edge">
+<title>c&#45;&gt;d</title>
+<path fill="none" stroke="black" d="M148.7,-583.81C137.35,-574.66 123.22,-563.26 110.9,-553.32"/>
+<polygon fill="black" stroke="black" points="113.09,-550.58 103.11,-547.03 108.69,-556.03 113.09,-550.58"/>
+</g>
+<!-- e -->
+<g id="node6" class="node">
+<title>e</title>
+<polygon fill="none" stroke="black" points="141,-474 62.52,-456 141,-438 219.48,-456 141,-474"/>
+<text text-anchor="middle" x="141" y="-453.2" font-family="Helvetica,sans-Serif" font-size="11.00">Validate input</text>
+</g>
+<!-- d&#45;&gt;e -->
+<g id="edge5" class="edge">
+<title>d&#45;&gt;e</title>
+<path fill="none" stroke="black" d="M96.28,-510.81C104.14,-501.36 113.98,-489.51 122.43,-479.35"/>
+<polygon fill="black" stroke="black" points="125.14,-481.56 128.84,-471.63 119.76,-477.08 125.14,-481.56"/>
+</g>
+<!-- e&#45;&gt;c -->
+<g id="edge6" class="edge">
+<title>e&#45;&gt;c</title>
+<path fill="none" stroke="black" d="M152.6,-471.6C160.04,-481.94 169.03,-496.5 173,-511 178.63,-531.54 177.42,-555.72 175.05,-573.83"/>
+<polygon fill="black" stroke="black" points="171.59,-573.32 173.57,-583.73 178.51,-574.36 171.59,-573.32"/>
+<text text-anchor="middle" x="201.5" y="-525.3" font-family="Times,serif" font-size="14.00">invalid</text>
+</g>
+<!-- f -->
+<g id="node7" class="node">
+<title>f</title>
+<path fill="none" stroke="black" d="M176.5,-387C176.5,-387 105.5,-387 105.5,-387 99.5,-387 93.5,-381 93.5,-375 93.5,-375 93.5,-363 93.5,-363 93.5,-357 99.5,-351 105.5,-351 105.5,-351 176.5,-351 176.5,-351 182.5,-351 188.5,-357 188.5,-363 188.5,-363 188.5,-375 188.5,-375 188.5,-381 182.5,-387 176.5,-387"/>
+<text text-anchor="middle" x="141" y="-366.2" font-family="Helvetica,sans-Serif" font-size="11.00">Compute BMR</text>
+</g>
+<!-- e&#45;&gt;f -->
+<g id="edge7" class="edge">
+<title>e&#45;&gt;f</title>
+<path fill="none" stroke="black" d="M141,-437.8C141,-426.16 141,-410.55 141,-397.24"/>
+<polygon fill="black" stroke="black" points="144.5,-397.18 141,-387.18 137.5,-397.18 144.5,-397.18"/>
+<text text-anchor="middle" x="158.5" y="-408.8" font-family="Times,serif" font-size="14.00">valid</text>
+</g>
+<!-- g -->
+<g id="node8" class="node">
+<title>g</title>
+<path fill="none" stroke="black" d="M205.5,-314C205.5,-314 76.5,-314 76.5,-314 70.5,-314 64.5,-308 64.5,-302 64.5,-302 64.5,-290 64.5,-290 64.5,-284 70.5,-278 76.5,-278 76.5,-278 205.5,-278 205.5,-278 211.5,-278 217.5,-284 217.5,-290 217.5,-290 217.5,-302 217.5,-302 217.5,-308 211.5,-314 205.5,-314"/>
+<text text-anchor="middle" x="141" y="-293.2" font-family="Helvetica,sans-Serif" font-size="11.00">Compute activity energy</text>
+</g>
+<!-- f&#45;&gt;g -->
+<g id="edge8" class="edge">
+<title>f&#45;&gt;g</title>
+<path fill="none" stroke="black" d="M141,-350.81C141,-342.79 141,-333.05 141,-324.07"/>
+<polygon fill="black" stroke="black" points="144.5,-324.03 141,-314.03 137.5,-324.03 144.5,-324.03"/>
+</g>
+<!-- h -->
+<g id="node9" class="node">
+<title>h</title>
+<path fill="none" stroke="black" d="M217,-241C217,-241 65,-241 65,-241 59,-241 53,-235 53,-229 53,-229 53,-217 53,-217 53,-211 59,-205 65,-205 65,-205 217,-205 217,-205 223,-205 229,-211 229,-217 229,-217 229,-229 229,-229 229,-235 223,-241 217,-241"/>
+<text text-anchor="middle" x="141" y="-220.2" font-family="Helvetica,sans-Serif" font-size="11.00">Apply context factor and TEF</text>
+</g>
+<!-- g&#45;&gt;h -->
+<g id="edge9" class="edge">
+<title>g&#45;&gt;h</title>
+<path fill="none" stroke="black" d="M141,-277.81C141,-269.79 141,-260.05 141,-251.07"/>
+<polygon fill="black" stroke="black" points="144.5,-251.03 141,-241.03 137.5,-251.03 144.5,-251.03"/>
+</g>
+<!-- i -->
+<g id="node10" class="node">
+<title>i</title>
+<path fill="none" stroke="black" d="M212,-168C212,-168 70,-168 70,-168 64,-168 58,-162 58,-156 58,-156 58,-144 58,-144 58,-138 64,-132 70,-132 70,-132 212,-132 212,-132 218,-132 224,-138 224,-144 224,-144 224,-156 224,-156 224,-162 218,-168 212,-168"/>
+<text text-anchor="middle" x="141" y="-147.2" font-family="Helvetica,sans-Serif" font-size="11.00">Show TDEE and breakdown</text>
+</g>
+<!-- h&#45;&gt;i -->
+<g id="edge10" class="edge">
+<title>h&#45;&gt;i</title>
+<path fill="none" stroke="black" d="M141,-204.81C141,-196.79 141,-187.05 141,-178.07"/>
+<polygon fill="black" stroke="black" points="144.5,-178.03 141,-168.03 137.5,-178.03 144.5,-178.03"/>
+</g>
+<!-- j -->
+<g id="node11" class="node">
+<title>j</title>
+<path fill="none" stroke="black" d="M205.5,-95C205.5,-95 76.5,-95 76.5,-95 70.5,-95 64.5,-89 64.5,-83 64.5,-83 64.5,-71 64.5,-71 64.5,-65 70.5,-59 76.5,-59 76.5,-59 205.5,-59 205.5,-59 211.5,-59 217.5,-65 217.5,-71 217.5,-71 217.5,-83 217.5,-83 217.5,-89 211.5,-95 205.5,-95"/>
+<text text-anchor="middle" x="141" y="-74.2" font-family="Helvetica,sans-Serif" font-size="11.00">Save estimate to history</text>
+</g>
+<!-- i&#45;&gt;j -->
+<g id="edge11" class="edge">
+<title>i&#45;&gt;j</title>
+<path fill="none" stroke="black" d="M141,-131.81C141,-123.79 141,-114.05 141,-105.07"/>
+<polygon fill="black" stroke="black" points="144.5,-105.03 141,-95.03 137.5,-105.03 144.5,-105.03"/>
+</g>
+<!-- t -->
+<g id="node12" class="node">
+<title>t</title>
+<ellipse fill="black" stroke="black" cx="141" cy="-11" rx="7" ry="7"/>
+<ellipse fill="none" stroke="black" cx="141" cy="-11" rx="11" ry="11"/>
+</g>
+<!-- j&#45;&gt;t -->
+<g id="edge12" class="edge">
+<title>j&#45;&gt;t</title>
+<path fill="none" stroke="black" d="M141,-58.85C141,-50.71 141,-40.93 141,-32.42"/>
+<polygon fill="black" stroke="black" points="144.5,-32.2 141,-22.2 137.5,-32.2 144.5,-32.2"/>
+</g>
+</g>
+</svg>
+<figcaption>Figure 3: Activity diagram for generating a daily estimate.</figcaption></figure>
+<h3>11.4 Entity Relationship Diagram (ERD)</h3>
+<figure><svg
+ viewBox="0.00 0.00 315.00 278.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 274)">
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-274 311,-274 311,4 -4,4"/>
+<!-- U -->
+<g id="node1" class="node">
+<title>U</title>
+<polygon fill="none" stroke="black" points="196,-270 0,-270 0,-218 196,-218 196,-270"/>
+<text text-anchor="middle" x="98" y="-258" font-family="Helvetica,sans-Serif" font-size="10.00">USER</text>
+<text text-anchor="middle" x="98" y="-247" font-family="Helvetica,sans-Serif" font-size="10.00">(PK user_id)</text>
+<text text-anchor="middle" x="98" y="-236" font-family="Helvetica,sans-Serif" font-size="10.00">name, email, password,</text>
+<text text-anchor="middle" x="98" y="-225" font-family="Helvetica,sans-Serif" font-size="10.00">age, sex, height_cm, weight_kg, role</text>
+</g>
+<!-- L -->
+<g id="node2" class="node">
+<title>L</title>
+<polygon fill="none" stroke="black" points="174,-172 22,-172 22,-109 174,-109 174,-172"/>
+<text text-anchor="middle" x="98" y="-160" font-family="Helvetica,sans-Serif" font-size="10.00">DAILY_LOG</text>
+<text text-anchor="middle" x="98" y="-149" font-family="Helvetica,sans-Serif" font-size="10.00">(PK log_id)</text>
+<text text-anchor="middle" x="98" y="-138" font-family="Helvetica,sans-Serif" font-size="10.00">(FK user_id)</text>
+<text text-anchor="middle" x="98" y="-127" font-family="Helvetica,sans-Serif" font-size="10.00">log_date, sleep_hours,</text>
+<text text-anchor="middle" x="98" y="-116" font-family="Helvetica,sans-Serif" font-size="10.00">temperature_c, stress_level</text>
+</g>
+<!-- U&#45;&gt;L -->
+<g id="edge1" class="edge">
+<title>U&#45;&gt;L</title>
+<path fill="none" stroke="black" d="M98,-217.91C98,-204.06 98,-186.74 98,-172.1"/>
+<text text-anchor="middle" x="109" y="-192.8" font-family="Helvetica,sans-Serif" font-size="9.00">1 : N</text>
+</g>
+<!-- LA -->
+<g id="node4" class="node">
+<title>LA</title>
+<polygon fill="none" stroke="black" points="307,-57.5 181,-57.5 181,-5.5 307,-5.5 307,-57.5"/>
+<text text-anchor="middle" x="244" y="-45.5" font-family="Helvetica,sans-Serif" font-size="10.00">LOG_ACTIVITY</text>
+<text text-anchor="middle" x="244" y="-34.5" font-family="Helvetica,sans-Serif" font-size="10.00">(PK id)</text>
+<text text-anchor="middle" x="244" y="-23.5" font-family="Helvetica,sans-Serif" font-size="10.00">(FK log_id, activity_id)</text>
+<text text-anchor="middle" x="244" y="-12.5" font-family="Helvetica,sans-Serif" font-size="10.00">duration_hours</text>
+</g>
+<!-- L&#45;&gt;LA -->
+<g id="edge2" class="edge">
+<title>L&#45;&gt;LA</title>
+<path fill="none" stroke="black" d="M139.84,-108.84C161.91,-92.66 188.67,-73.05 209.54,-57.75"/>
+<text text-anchor="middle" x="186" y="-83.8" font-family="Helvetica,sans-Serif" font-size="9.00">1 : N</text>
+</g>
+<!-- E -->
+<g id="node5" class="node">
+<title>E</title>
+<polygon fill="none" stroke="black" points="163,-63 29,-63 29,0 163,0 163,-63"/>
+<text text-anchor="middle" x="96" y="-51" font-family="Helvetica,sans-Serif" font-size="10.00">ESTIMATE</text>
+<text text-anchor="middle" x="96" y="-40" font-family="Helvetica,sans-Serif" font-size="10.00">(PK estimate_id)</text>
+<text text-anchor="middle" x="96" y="-29" font-family="Helvetica,sans-Serif" font-size="10.00">(FK log_id)</text>
+<text text-anchor="middle" x="96" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">bmr, activity_kcal,</text>
+<text text-anchor="middle" x="96" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">context_factor, tef, tdee</text>
+</g>
+<!-- L&#45;&gt;E -->
+<g id="edge4" class="edge">
+<title>L&#45;&gt;E</title>
+<path fill="none" stroke="black" d="M97.43,-108.84C97.16,-94.51 96.84,-77.49 96.57,-63.17"/>
+<text text-anchor="middle" x="108" y="-83.8" font-family="Helvetica,sans-Serif" font-size="9.00">1 : 1</text>
+</g>
+<!-- A -->
+<g id="node3" class="node">
+<title>A</title>
+<polygon fill="none" stroke="black" points="295,-161 193,-161 193,-120 295,-120 295,-161"/>
+<text text-anchor="middle" x="244" y="-149" font-family="Helvetica,sans-Serif" font-size="10.00">ACTIVITY</text>
+<text text-anchor="middle" x="244" y="-138" font-family="Helvetica,sans-Serif" font-size="10.00">(PK activity_id)</text>
+<text text-anchor="middle" x="244" y="-127" font-family="Helvetica,sans-Serif" font-size="10.00">name, met_value</text>
+</g>
+<!-- A&#45;&gt;LA -->
+<g id="edge3" class="edge">
+<title>A&#45;&gt;LA</title>
+<path fill="none" stroke="black" d="M244,-119.87C244,-102.38 244,-76.67 244,-57.67"/>
+<text text-anchor="middle" x="255" y="-83.8" font-family="Helvetica,sans-Serif" font-size="9.00">1 : N</text>
+</g>
+</g>
+</svg>
+<figcaption>Figure 4: Entity relationship diagram.</figcaption></figure>
+<h3>11.5 Class Diagram</h3>
+<figure><svg
+ viewBox="0.00 0.00 279.50 472.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 468)">
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-468 275.5,-468 275.5,4 -4,4"/>
+<!-- User -->
+<g id="node1" class="node">
+<title>User</title>
+<polygon fill="none" stroke="black" points="20,-329.5 20,-463.5 120,-463.5 120,-329.5 20,-329.5"/>
+<text text-anchor="middle" x="70" y="-451.5" font-family="Helvetica,sans-Serif" font-size="10.00">User</text>
+<polyline fill="none" stroke="black" points="20,-444.5 120,-444.5 "/>
+<text text-anchor="start" x="28" y="-432.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; userId</text>
+<text text-anchor="start" x="28" y="-421.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; name</text>
+<text text-anchor="start" x="28" y="-410.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; age</text>
+<text text-anchor="start" x="28" y="-399.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; sex</text>
+<text text-anchor="start" x="28" y="-388.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; heightCm</text>
+<text text-anchor="start" x="28" y="-377.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; weightKg</text>
+<polyline fill="none" stroke="black" points="20,-370.5 120,-370.5 "/>
+<text text-anchor="start" x="28" y="-358.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ updateProfile()</text>
+<text text-anchor="start" x="28" y="-347.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ addLog()</text>
+<text text-anchor="start" x="28" y="-336.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ viewHistory()</text>
+</g>
+<!-- DailyLog -->
+<g id="node2" class="node">
+<title>DailyLog</title>
+<polygon fill="none" stroke="black" points="24.5,-170.5 24.5,-282.5 115.5,-282.5 115.5,-170.5 24.5,-170.5"/>
+<text text-anchor="middle" x="70" y="-270.5" font-family="Helvetica,sans-Serif" font-size="10.00">DailyLog</text>
+<polyline fill="none" stroke="black" points="24.5,-263.5 115.5,-263.5 "/>
+<text text-anchor="start" x="32.5" y="-251.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; logId</text>
+<text text-anchor="start" x="32.5" y="-240.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; date</text>
+<text text-anchor="start" x="32.5" y="-229.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; sleepHours</text>
+<text text-anchor="start" x="32.5" y="-218.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; temperatureC</text>
+<text text-anchor="start" x="32.5" y="-207.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; stressLevel</text>
+<polyline fill="none" stroke="black" points="24.5,-200.5 115.5,-200.5 "/>
+<text text-anchor="start" x="32.5" y="-188.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ addActivity()</text>
+<text text-anchor="start" x="32.5" y="-177.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getContext()</text>
+</g>
+<!-- User&#45;&gt;DailyLog -->
+<g id="edge1" class="edge">
+<title>User&#45;&gt;DailyLog</title>
+<path fill="none" stroke="black" d="M70,-329.1C70,-317.18 70,-304.77 70,-292.88"/>
+<polygon fill="black" stroke="black" points="73.5,-292.6 70,-282.6 66.5,-292.6 73.5,-292.6"/>
+<text text-anchor="middle" x="89.5" y="-303.8" font-family="Helvetica,sans-Serif" font-size="9.00">1..* &#160;has</text>
+</g>
+<!-- Activity -->
+<g id="node3" class="node">
+<title>Activity</title>
+<polygon fill="none" stroke="black" points="136.5,-22.5 136.5,-101.5 271.5,-101.5 271.5,-22.5 136.5,-22.5"/>
+<text text-anchor="middle" x="204" y="-89.5" font-family="Helvetica,sans-Serif" font-size="10.00">Activity</text>
+<polyline fill="none" stroke="black" points="136.5,-82.5 271.5,-82.5 "/>
+<text text-anchor="start" x="144.5" y="-70.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; activityId</text>
+<text text-anchor="start" x="144.5" y="-59.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; name</text>
+<text text-anchor="start" x="144.5" y="-48.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; metValue</text>
+<polyline fill="none" stroke="black" points="136.5,-41.5 271.5,-41.5 "/>
+<text text-anchor="start" x="144.5" y="-29.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ energy(weight, hours)</text>
+</g>
+<!-- DailyLog&#45;&gt;Activity -->
+<g id="edge2" class="edge">
+<title>DailyLog&#45;&gt;Activity</title>
+<path fill="none" stroke="black" d="M115.37,-170.48C131.71,-150.67 149.98,-128.51 165.66,-109.49"/>
+<polygon fill="black" stroke="black" points="168.55,-111.49 172.21,-101.55 163.15,-107.04 168.55,-111.49"/>
+<text text-anchor="middle" x="166.5" y="-144.8" font-family="Helvetica,sans-Serif" font-size="9.00">*..* &#160;includes</text>
+</g>
+<!-- Estimator -->
+<g id="node4" class="node">
+<title>Estimator</title>
+<polygon fill="none" stroke="black" points="0,-0.5 0,-123.5 118,-123.5 118,-0.5 0,-0.5"/>
+<text text-anchor="middle" x="59" y="-111.5" font-family="Helvetica,sans-Serif" font-size="10.00">Estimator</text>
+<polyline fill="none" stroke="black" points="0,-104.5 118,-104.5 "/>
+<text text-anchor="start" x="8" y="-92.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; bmr</text>
+<text text-anchor="start" x="8" y="-81.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; activityKcal</text>
+<text text-anchor="start" x="8" y="-70.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; contextFactor</text>
+<text text-anchor="start" x="8" y="-59.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; tef</text>
+<polyline fill="none" stroke="black" points="0,-52.5 118,-52.5 "/>
+<text text-anchor="start" x="8" y="-40.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ calculateBMR()</text>
+<text text-anchor="start" x="8" y="-29.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ calculateActivity()</text>
+<text text-anchor="start" x="8" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ calculateContext()</text>
+<text text-anchor="start" x="8" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ calculateTDEE()</text>
+</g>
+<!-- DailyLog&#45;&gt;Estimator -->
+<g id="edge3" class="edge">
+<title>DailyLog&#45;&gt;Estimator</title>
+<path fill="none" stroke="black" d="M65.33,-170.13C64.86,-164.01 64.4,-157.88 64,-152 63.6,-146.16 63.21,-140.11 62.83,-134.03"/>
+<polygon fill="black" stroke="black" points="66.31,-133.58 62.21,-123.81 59.32,-134.01 66.31,-133.58"/>
+<text text-anchor="middle" x="80.5" y="-144.8" font-family="Helvetica,sans-Serif" font-size="9.00">1 &#160;uses</text>
+</g>
+<!-- Admin -->
+<g id="node5" class="node">
+<title>Admin</title>
+<polygon fill="none" stroke="black" points="143.5,-192.5 143.5,-260.5 264.5,-260.5 264.5,-192.5 143.5,-192.5"/>
+<text text-anchor="middle" x="204" y="-248.5" font-family="Helvetica,sans-Serif" font-size="10.00">Administrator</text>
+<polyline fill="none" stroke="black" points="143.5,-241.5 264.5,-241.5 "/>
+<text text-anchor="start" x="151.5" y="-229.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; adminId</text>
+<polyline fill="none" stroke="black" points="143.5,-222.5 264.5,-222.5 "/>
+<text text-anchor="start" x="151.5" y="-210.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ manageActivities()</text>
+<text text-anchor="start" x="151.5" y="-199.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ manageUsers()</text>
+</g>
+<!-- Admin&#45;&gt;Activity -->
+<g id="edge4" class="edge">
+<title>Admin&#45;&gt;Activity</title>
+<path fill="none" stroke="black" d="M204,-192.22C204,-169.03 204,-137.7 204,-111.7"/>
+<polygon fill="black" stroke="black" points="207.5,-111.66 204,-101.66 200.5,-111.66 207.5,-111.66"/>
+<text text-anchor="middle" x="225" y="-144.8" font-family="Helvetica,sans-Serif" font-size="9.00">manages</text>
+</g>
+</g>
+</svg>
+<figcaption>Figure 5: Class diagram.</figcaption></figure>
+<h3>11.6 Object Diagram</h3>
+<figure><svg
+ viewBox="0.00 0.00 241.50 329.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 325)">
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-325 237.5,-325 237.5,4 -4,4"/>
+<!-- u -->
+<g id="node1" class="node">
+<title>u</title>
+<polygon fill="none" stroke="black" points="43,-238.5 43,-320.5 180,-320.5 180,-238.5 43,-238.5"/>
+<text text-anchor="middle" x="111.5" y="-308.5" font-family="Helvetica,sans-Serif" font-size="10.00">u1 : User</text>
+<polyline fill="none" stroke="black" points="43,-301.5 180,-301.5 "/>
+<text text-anchor="start" x="51" y="-289.5" font-family="Helvetica,sans-Serif" font-size="10.00">name = Iffat Mokarrama</text>
+<text text-anchor="start" x="51" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00">age = 21</text>
+<text text-anchor="start" x="51" y="-267.5" font-family="Helvetica,sans-Serif" font-size="10.00">sex = female</text>
+<text text-anchor="start" x="51" y="-256.5" font-family="Helvetica,sans-Serif" font-size="10.00">heightCm = 160</text>
+<text text-anchor="start" x="51" y="-245.5" font-family="Helvetica,sans-Serif" font-size="10.00">weightKg = 55</text>
+</g>
+<!-- l -->
+<g id="node2" class="node">
+<title>l</title>
+<polygon fill="none" stroke="black" points="48,-129.5 48,-200.5 175,-200.5 175,-129.5 48,-129.5"/>
+<text text-anchor="middle" x="111.5" y="-188.5" font-family="Helvetica,sans-Serif" font-size="10.00">log1 : DailyLog</text>
+<polyline fill="none" stroke="black" points="48,-181.5 175,-181.5 "/>
+<text text-anchor="start" x="56" y="-169.5" font-family="Helvetica,sans-Serif" font-size="10.00">date = 2026&#45;10&#45;28</text>
+<text text-anchor="start" x="56" y="-158.5" font-family="Helvetica,sans-Serif" font-size="10.00">sleepHours = 7</text>
+<text text-anchor="start" x="56" y="-147.5" font-family="Helvetica,sans-Serif" font-size="10.00">temperatureC = 33</text>
+<text text-anchor="start" x="56" y="-136.5" font-family="Helvetica,sans-Serif" font-size="10.00">stressLevel = medium</text>
+</g>
+<!-- u&#45;&gt;l -->
+<g id="edge1" class="edge">
+<title>u&#45;&gt;l</title>
+<path fill="none" stroke="black" d="M111.5,-238.2C111.5,-229.41 111.5,-220.05 111.5,-211.09"/>
+<polygon fill="black" stroke="black" points="115,-210.8 111.5,-200.8 108,-210.8 115,-210.8"/>
+</g>
+<!-- a -->
+<g id="node3" class="node">
+<title>a</title>
+<polygon fill="none" stroke="black" points="0,-17 0,-66 97,-66 97,-17 0,-17"/>
+<text text-anchor="middle" x="48.5" y="-54" font-family="Helvetica,sans-Serif" font-size="10.00">walk : Activity</text>
+<polyline fill="none" stroke="black" points="0,-47 97,-47 "/>
+<text text-anchor="start" x="8" y="-35" font-family="Helvetica,sans-Serif" font-size="10.00">name = walking</text>
+<text text-anchor="start" x="8" y="-24" font-family="Helvetica,sans-Serif" font-size="10.00">metValue = 3.5</text>
+</g>
+<!-- l&#45;&gt;a -->
+<g id="edge2" class="edge">
+<title>l&#45;&gt;a</title>
+<path fill="none" stroke="black" d="M93.45,-129.18C84.69,-112.3 74.23,-92.13 65.61,-75.49"/>
+<polygon fill="black" stroke="black" points="68.48,-73.43 60.77,-66.16 62.26,-76.65 68.48,-73.43"/>
+<text text-anchor="middle" x="100" y="-103.8" font-family="Helvetica,sans-Serif" font-size="9.00">1 hour</text>
+</g>
+<!-- e -->
+<g id="node4" class="node">
+<title>e</title>
+<polygon fill="none" stroke="black" points="115.5,-0.5 115.5,-82.5 233.5,-82.5 233.5,-0.5 115.5,-0.5"/>
+<text text-anchor="middle" x="174.5" y="-70.5" font-family="Helvetica,sans-Serif" font-size="10.00">est1 : Estimator</text>
+<polyline fill="none" stroke="black" points="115.5,-63.5 233.5,-63.5 "/>
+<text text-anchor="start" x="123.5" y="-51.5" font-family="Helvetica,sans-Serif" font-size="10.00">bmr = 1284</text>
+<text text-anchor="start" x="123.5" y="-40.5" font-family="Helvetica,sans-Serif" font-size="10.00">activityKcal = 446</text>
+<text text-anchor="start" x="123.5" y="-29.5" font-family="Helvetica,sans-Serif" font-size="10.00">contextFactor = 1.02</text>
+<text text-anchor="start" x="123.5" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00">tef = 176</text>
+<text text-anchor="start" x="123.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">tdee = 1940</text>
+</g>
+<!-- l&#45;&gt;e -->
+<g id="edge3" class="edge">
+<title>l&#45;&gt;e</title>
+<path fill="none" stroke="black" d="M129.55,-129.18C135.58,-117.56 142.42,-104.38 148.91,-91.86"/>
+<polygon fill="black" stroke="black" points="152.06,-93.39 153.55,-82.9 145.84,-90.16 152.06,-93.39"/>
+</g>
+</g>
+</svg>
+<figcaption>Figure 6: Object diagram for a sample estimate.</figcaption></figure>
+
+<h2 id="s12">12 Basic Database Design</h2>
+<table>
+  <tr><th>Table</th><th>Main fields</th></tr>
+  <tr><td>users</td><td>user_id (PK), name, email, password_hash, age, sex, height_cm, weight_kg, role</td></tr>
+  <tr><td>activities</td><td>activity_id (PK), name, met_value</td></tr>
+  <tr><td>daily_logs</td><td>log_id (PK), user_id (FK), log_date, sleep_hours, temperature_c, stress_level</td></tr>
+  <tr><td>log_activities</td><td>id (PK), log_id (FK), activity_id (FK), duration_hours</td></tr>
+  <tr><td>estimates</td><td>estimate_id (PK), log_id (FK), bmr, activity_kcal, context_factor, tef, tdee</td></tr>
+</table>
+
+<h2 id="s13">13 UI Prototype Overview</h2>
+<p>The initial prototype contains the following screens:</p>
+<ul>
+  <li><strong>Login/Register:</strong> simple form with role-based redirect.</li>
+  <li><strong>Profile:</strong> age, sex, height and weight entry.</li>
+  <li><strong>Daily Log:</strong> activity selection with durations and context inputs.</li>
+  <li><strong>Result:</strong> total daily energy with a breakdown of BMR, activity, context and TEF.</li>
+  <li><strong>History:</strong> list and chart of previous estimates.</li>
+  <li><strong>Admin Panel:</strong> manage MET values and users.</li>
+</ul>
+
+<h2 id="s14">14 Six-Week Development Schedule</h2>
+<table>
+  <tr><th>Week</th><th>Focus</th><th>Tasks</th></tr>
+  <tr><td>1</td><td>Planning</td><td>Requirements, proposal, GitHub repository setup</td></tr>
+  <tr><td>2</td><td>Design</td><td>DFD, use case, ERD, class diagrams, UI sketches</td></tr>
+  <tr><td>3</td><td>Core engine</td><td>BMR, MET activity energy, context factor, TEF, unit tests</td></tr>
+  <tr><td>4</td><td>Database and UI</td><td>SQLite schema, Flask routes, profile and daily log pages</td></tr>
+  <tr><td>5</td><td>History and admin</td><td>Result page, history charts, admin MET management</td></tr>
+  <tr><td>6</td><td>Testing and final</td><td>System testing, bug fixing, documentation, final submission</td></tr>
+</table>
+
+<h2 id="s15">15 Milestones and Deliverables</h2>
+<table>
+  <tr><th>Milestone</th><th>Deliverable</th></tr>
+  <tr><td>End of Week 2</td><td>Proposal and design diagrams</td></tr>
+  <tr><td>End of Week 3</td><td>Working calculation engine with tests</td></tr>
+  <tr><td>End of Week 5</td><td>Functional web prototype</td></tr>
+  <tr><td>End of Week 6</td><td>Final system, report and GitHub repository</td></tr>
+</table>
+
+<h2 id="s16">16 Basic Testing Strategy</h2>
+<ul>
+  <li><strong>Unit testing:</strong> BMR, activity energy, context factor and TDEE functions are tested with pytest.</li>
+  <li><strong>Integration testing:</strong> form input to database to result page.</li>
+  <li><strong>Validation testing:</strong> invalid or extreme inputs are rejected with clear messages.</li>
+  <li><strong>User acceptance:</strong> classmates try the prototype and give feedback.</li>
+</ul>
+
+<h2 id="s17">17 Risk Analysis and Mitigation</h2>
+<table>
+  <tr><th>Risk</th><th>Mitigation</th></tr>
+  <tr><td>Estimates are mistaken for medical advice</td><td>Show a clear disclaimer on the result page</td></tr>
+  <tr><td>Context factors are approximate</td><td>Keep them configurable and document the assumptions</td></tr>
+  <tr><td>Limited time for one developer</td><td>Fixed scope and incremental delivery</td></tr>
+  <tr><td>Data loss</td><td>Regular Git commits and database backups</td></tr>
+</table>
+
+<h2 id="s18">18 Expected Outcomes</h2>
+<p>At the end of the project NutriMet will provide a working, easy-to-use estimator that gives a more realistic daily calorie and energy expenditure figure than a fixed multiplier, with a clear breakdown, stored history and complete design documentation.</p>
+
+<h2 id="s19">19 Conclusion</h2>
+<p>NutriMet addresses a practical problem with a small, realistic scope. By combining BMR, MET-based activity energy, daily context and TEF, it produces an explainable estimate. The proposal, system design and prototype plan prepare the ground for full implementation in the coming weeks.</p>
+
+<h2 id="refs">References</h2>
+<ol>
+  <li>M. D. Mifflin et al., “A new predictive equation for resting energy expenditure in healthy individuals,” <em>American Journal of Clinical Nutrition</em>, 51(2), 1990.</li>
+  <li>B. E. Ainsworth et al., “2011 Compendium of Physical Activities,” <em>Medicine &amp; Science in Sports &amp; Exercise</em>, 43(8), 2011.</li>
+  <li>Flask Documentation, <a href="https://flask.palletsprojects.com">https://flask.palletsprojects.com</a>.</li>
+  <li>SQLite Documentation, <a href="https://www.sqlite.org/docs.html">https://www.sqlite.org/docs.html</a>.</li>
+</ol>
+</div>
+</body>
+</html>
