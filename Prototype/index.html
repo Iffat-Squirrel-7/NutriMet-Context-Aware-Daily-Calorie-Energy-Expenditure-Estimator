@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriMet - Context-Aware Daily Calorie & Energy Expenditure Estimator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-brand">
+            <span class="logo-icon">🌱</span>
+            <span class="logo-text">NutriMet</span>
+        </div>
+        <nav class="nav-links">
+            <a href="index.html" class="active">Home</a>
+            <a href="meals.html">Meals</a>
+            <a href="context.html">Context Input</a>
+            <a href="activity.html">Activity</a>
+        </nav>
+        <div class="nav-actions">
+            <button class="btn-primary">+ Log a Meal</button>
+            <div class="user-avatar">A</div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container">
+        <!-- Hero Banner -->
+        <section class="hero-banner">
+            <div class="hero-content">
+                <h1>Welcome back, Amina. Your smart plan for "Exam Week" is active.</h1>
+                <p>NutriMet has adjusted your TDEE and suggests light, nourishing meals for mental focus and less stress.</p>
+                <div class="hero-buttons">
+                    <button class="btn-light">View Today's Meals</button>
+                    <button class="btn-outline">Input Your Context</button>
+                </div>
+            </div>
+            <div class="hero-graphic">
+                <div class="calorie-ring-card">
+                    <span class="ring-title">Calorie</span>
+                    <div class="mock-ring">🥗</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Metric Cards -->
+        <section class="metrics-grid">
+            <div class="metric-card">
+                <h3>2150</h3>
+                <p>Suggested Daily TDEE <br><small>(Context-Aware)</small></p>
+            </div>
+            <div class="metric-card">
+                <h3>620</h3>
+                <p>Calories Burned So Far <br><small>(BMR + Activity)</small></p>
+            </div>
+            <div class="metric-card">
+                <h3>1530</h3>
+                <p>Target Calorie Intake</p>
+            </div>
+            <div class="metric-card">
+                <h3>4</h3>
+                <p>Active Context Factors <br><small>(Exams, Low Sleep, Hot Weather, etc.)</small></p>
+            </div>
+        </section>
+
+        <!-- Suggested Meals Section -->
+        <section class="section-block">
+            <h2>Context-Aware Suggested Meals</h2>
+            <div class="meals-grid">
+                <div class="meal-card green">
+                    <span class="badge">Suggested</span>
+                    <h4>Macro-Balanced Salad</h4>
+                    <p>1 large bowl</p>
+                    <p class="meta">by NutriMet Chef</p>
+                    <p class="location">→ Library entrance</p>
+                </div>
+                <div class="meal-card blue">
+                    <span class="badge">Low Stress</span>
+                    <h4>Grilled Fish with Lemon</h4>
+                    <p>1 portion</p>
+                    <p class="meta">by Wellness Caterer</p>
+                    <p class="location">→ Main building canteen</p>
+                </div>
+                <div class="meal-card yellow">
+                    <span class="badge">Hydrating</span>
+                    <h4>Fresh Fruit & Yogurt</h4>
+                    <p>1 cup</p>
+                    <p class="meta">by Wellness Caterer</p>
+                    <p class="location">→ Science block lobby</p>
+                </div>
+                <div class="meal-card purple">
+                    <span class="badge">Brain Food</span>
+                    <h4>Nut & Seed Mix Bowl</h4>
+                    <p>1 serving</p>
+                    <p class="meta">by Healthy Bites</p>
+                    <p class="location">→ Sports hall reception</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Note -->
+    <footer class="footer">
+        <p>NutriMet • Personalized Wellness Prototype • Backend development planned later.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
